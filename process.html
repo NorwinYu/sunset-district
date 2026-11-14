@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How SUNSET DISTRICT was made — photoreal-game</title>
+<meta name="description" content="The iteration record and feature gallery for SUNSET DISTRICT, a code-generated city kart racer built with the photoreal-game skill.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b0d10'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%23ffb454' stroke-width='4'/%3E%3Cpath d='M12 42h40L40 20H24z' fill='%23ffb454'/%3E%3C/svg%3E">
+<style>
+:root{--ink:#0b0d10;--panel:#12151a;--paper:#f2ede3;--muted:#a39c90;--amber:#ffb454;--hot:#ff7a2f;--line:rgba(255,244,228,.16);--mono:"SFMono-Regular",ui-monospace,Menlo,monospace;--sans:"Helvetica Neue",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.kicker{font:700 10px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--amber)}
+.muted{color:var(--muted)}
+.nav{position:relative;z-index:10;background:#0b0d10;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:20px}
+.brand{display:flex;align-items:center;gap:12px;font:700 11px/1 var(--mono);letter-spacing:.18em;text-decoration:none;color:var(--paper)}
+.brand i{display:block;width:22px;height:22px;border:1px solid var(--amber);border-radius:50%;position:relative}
+.brand i:after{content:"";position:absolute;left:6px;top:6px;width:8px;height:8px;background:var(--amber);border-radius:50%}
+.navlinks{display:flex;gap:22px;font:600 9px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.navlinks a{text-decoration:none}.navlinks a:hover{color:var(--amber)}
+.hero{position:relative;min-height:min(780px,92vh);display:flex;align-items:flex-end;border-bottom:1px solid var(--line);overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url(assets/features/02-hero-keyshot.webp) center/cover no-repeat}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,13,16,.35),rgba(11,13,16,.12) 38%,rgba(11,13,16,.94) 86%)}
+.hero .wrap{position:relative;z-index:2;padding-top:90px;padding-bottom:56px}
+.hero h1{font:800 clamp(60px,9vw,138px)/.82 var(--sans);letter-spacing:-.06em;margin:22px 0 0;text-transform:uppercase}
+.hero h1 span{display:block;color:transparent;-webkit-text-stroke:1.4px rgba(255,196,120,.85)}
+.hero-sub{max-width:560px;font:400 16px/1.65 var(--sans);color:rgba(242,237,227,.76);margin:24px 0 0}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;padding:14px 18px;border:1px solid var(--line);font:700 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;transition:.2s}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--amber);color:#18120a;border-color:var(--amber)}
+.btn.ghost{color:rgba(242,237,227,.85)}
+.btn.ghost:hover{border-color:var(--amber);color:var(--amber)}
+.hero-meta{display:flex;gap:28px;flex-wrap:wrap;margin-top:38px;padding-top:18px;border-top:1px solid var(--line);font:600 9px/1 var(--mono);letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.hero-meta b{color:var(--paper);font-weight:600}
+section{padding:86px 0;border-bottom:1px solid var(--line)}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:34px}
+.section-head h2{font:800 clamp(34px,5vw,60px)/.9 var(--sans);letter-spacing:-.045em;margin:10px 0 0;text-transform:uppercase}
+.section-head p{max-width:440px;font:400 14px/1.65 var(--sans);color:var(--muted);margin:0}
+.skill-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:38px;align-items:start}
+.skill{border-left:2px solid var(--amber);padding:6px 0 6px 24px}
+.skill h2{font:800 clamp(42px,7vw,82px)/.85 var(--sans);letter-spacing:-.055em;margin:12px 0 16px;color:var(--paper)}
+.skill h2 code{font-family:var(--mono);font-size:.44em;letter-spacing:-.02em;color:var(--amber);display:block;margin-top:18px}
+.skill p{max-width:480px;font:400 14px/1.65 var(--sans);color:rgba(242,237,227,.76)}
+.skill-facts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:26px}
+.skill-facts div{background:var(--panel);padding:16px 18px}
+.skill-facts b{display:block;font:700 9px/1 var(--mono);letter-spacing:.16em;color:var(--amber);margin-bottom:9px;text-transform:uppercase}
+.skill-facts span{font:400 12px/1.55 var(--sans);color:rgba(242,237,227,.72)}
+.procedure{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.procedure div{background:var(--panel);padding:20px}
+.procedure b{display:block;font:700 10px/1 var(--mono);letter-spacing:.14em;color:var(--amber);margin-bottom:10px}
+.procedure p{margin:0;font:400 12px/1.6 var(--sans);color:var(--muted)}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+figure{margin:0;background:var(--panel);border:1px solid var(--line);overflow:hidden}
+figure img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;background:#080a0d}
+figure.portrait img{aspect-ratio:9/16;object-fit:contain;background:#0a0c0f;max-height:420px}
+figcaption{padding:13px 15px 15px}
+figcaption b{display:block;font:700 9px/1.2 var(--mono);letter-spacing:.13em;color:var(--amber);margin-bottom:6px;text-transform:uppercase}
+figcaption span{font:400 11px/1.5 var(--sans);color:var(--muted)}
+.timeline{display:flex;flex-direction:column;gap:1px;background:var(--line);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.round{display:grid;grid-template-columns:74px 1.1fr 1.5fr;gap:26px;background:var(--ink);padding:28px 0;border-bottom:1px solid var(--line)}
+.round:last-child{border-bottom:0}
+.round-no{font:800 26px/1 var(--sans);letter-spacing:-.04em;color:rgba(255,180,84,.55)}
+.round h3{font:700 20px/1.1 var(--sans);letter-spacing:-.02em;margin:0 0 10px;text-transform:uppercase}
+.round .body{font:400 13px/1.65 var(--sans);color:var(--muted)}
+.round .body b{color:rgba(242,237,227,.9);font-weight:600}
+.round figure{border:0;background:transparent}
+.round figure img{border:1px solid var(--line)}
+.round .metric{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font:600 9px/1 var(--mono);letter-spacing:.1em;color:var(--amber)}
+.round .metric span{color:var(--muted)}
+.iter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.iter-grid figure figcaption{padding:10px 12px}
+.iter-grid figure figcaption b{font-size:8px}
+.iter-grid figure figcaption span{font-size:10px}
+.wide{grid-column:span 2}
+.contact-frame{border:1px solid var(--line);margin-top:26px}
+.contact-frame img{display:block;width:100%;height:auto}
+.table-wrap{overflow-x:auto;border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);font:400 12px/1.5 var(--sans);color:var(--muted);vertical-align:top}
+th{font:700 9px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--paper);background:var(--panel)}
+td b{color:var(--amber);font-weight:600}
+.pass{color:#8adf9c;font:700 10px/1 var(--mono);letter-spacing:.08em}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:34px}
+.notes h3{font:700 14px/1.2 var(--sans);letter-spacing:.01em;text-transform:uppercase;margin:0 0 14px}
+.notes ul{margin:0;padding-left:18px;color:var(--muted);font:400 13px/1.7 var(--sans)}
+.notes li{margin:0 0 8px}
+.quote{border-left:2px solid var(--amber);padding-left:20px;margin:34px 0 0;font:400 16px/1.6 var(--sans);color:rgba(242,237,227,.82);max-width:760px}
+.privacy{border:1px solid var(--line);background:var(--panel);padding:24px;margin-top:28px}
+.privacy h3{margin:0 0 10px;font:700 10px/1 var(--mono);letter-spacing:.16em;color:var(--amber);text-transform:uppercase}
+.privacy p{margin:0;font:400 12px/1.7 var(--sans);color:var(--muted)}
+footer{padding:40px 0 70px}
+.footer-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.footer-row .brand{font-size:10px}
+.footer-links{display:flex;gap:18px;font:600 9px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase}
+.footer-links a{text-decoration:none;color:var(--muted)}.footer-links a:hover{color:var(--amber)}
+.legal{margin-top:26px;font:400 10px/1.6 var(--mono);letter-spacing:.04em;color:rgba(163,156,144,.7);max-width:820px}
+@media(max-width:900px){
+  .skill-grid,.notes{grid-template-columns:1fr}
+  .feature-grid{grid-template-columns:repeat(2,1fr)}
+  .procedure{grid-template-columns:1fr}
+  .round{grid-template-columns:48px 1fr;gap:18px}
+  .round figure{grid-column:2}
+  .iter-grid{grid-template-columns:repeat(2,1fr)}
+  .wide{grid-column:span 2}
+}
+@media(max-width:620px){
+  .wrap{padding:0 18px}
+  .navlinks{display:none}
+  .hero{min-height:88vh}
+  .hero h1{font-size:clamp(52px,15vw,84px)}
+  .hero-sub{font-size:14px}
+  .section-head{display:block}
+  .section-head p{margin-top:14px}
+  .feature-grid{grid-template-columns:1fr}
+  .iter-grid{grid-template-columns:1fr}
+  .wide{grid-column:auto}
+  .notes{gap:28px}
+  .round{grid-template-columns:1fr;gap:10px;padding:22px 0}
+  .round-no{font-size:16px;color:var(--amber)}
+  .round figure{grid-column:auto}
+  .skill-facts{grid-template-columns:1fr}
+  section{padding:58px 0}
+}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><i></i>SUNSET DISTRICT</a>
+  <div class="navlinks">
+    <a href="index.html">Play</a><a href="#features">Features</a><a href="#process">Process</a><a href="#gates">Gates</a>
+  </div>
+</div></nav>
+
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="wrap">
+    <div class="kicker">A city kart grand prix · built from code · 17:42</div>
+    <h1>SUNSET<span>DISTRICT</span></h1>
+    <p class="hero-sub">Four laps on a wet downtown circuit. Five rivals. A kart you can read down to the tyre lettering. This is the record of how it was made — and the gallery of everything it does.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="index.html">Play the grand prix →</a>
+      <a class="btn ghost" href="#features">See every feature</a>
+    </div>
+    <div class="hero-meta">
+      <span>Method · <b>photoreal-game skill</b></span>
+      <span>Build · <b>single HTML / no network</b></span>
+      <span>Race · <b>4 laps / 5 rivals / 4:00 clock</b></span>
+      <span>Verified · <b>31/31 playtest checks</b></span>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="skill">
+  <div class="wrap">
+    <div class="skill-grid">
+      <div class="skill">
+        <div class="kicker">The skill used</div>
+        <h2>photoreal-game<code>a procedure for playable, photographic 3D from code</code></h2>
+        <p>Everything in this build followed the <b>photoreal-game</b> skill: product before look; one dominant light with an environment for fill; material variation in albedo, roughness and normal; multi-scale composition; a filmic image formation chain; and executable gates instead of opinion.</p>
+        <p>The skill's order mattered. The title, race loop, settings, pause, save, touch path and failure states existed before the city was lit. Each art round changed one lever, was captured from fixed cameras, and was kept only if no gate regressed.</p>
+        <div class="skill-facts">
+          <div><b>The subject</b><span>A wet city circuit at golden hour, with a code-built kart as the hero object.</span></div>
+          <div><b>The signature system</b><span>Wet asphalt with a half-resolution planar reflection, puddles and roughness-masked Fresnel.</span></div>
+          <div><b>The verdicts</b><span>Product, mobile, census, lights, playtest and look gates — the gate wins over taste.</span></div>
+          <div><b>The constraint</b><span>No reference imagery. The look gate therefore ran in the skill's tone + emptiness fallback mode.</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="procedure">
+          <div><b>01 · Product</b><p>Title, race, pause, settings, save, touch, win/lose and restart are built first. A beautiful frame without a loop is a failure.</p></div>
+          <div><b>02 · Light</b><p>One shadow-casting sun down the canyon, a PMREM sky environment, a sky-tinted hemisphere and a cool bounce from the camera side.</p></div>
+          <div><b>03 · Materials</b><p>Procedural asphalt, paving, four facade styles, metal, concrete, wood, rubber, cloth and water — all with more than one varied channel.</p></div>
+          <div><b>04 · Composition</b><p>Kart, barrier, sidewalk, street wall, landmark towers and a distant skyline. Three scales and three depth layers in the hero frame.</p></div>
+          <div><b>05 · Image</b><p>HDR scene target, ACES tone mapping, bloom, FXAA, chromatic aberration, grain, vignette and a deliberate desaturation.</p></div>
+          <div><b>06 · Gates</b><p>Render, census, collision, lights, product, mobile, playtest and look. The stock walker gates were re-expressed for a barrier-lined circuit.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div><div class="kicker">Every system, visible</div><h2>Feature gallery</h2></div>
+      <p>Thirteen screens from a 1600 × 900 high-quality capture session. The touch shot is 390 × 844.</p>
+    </div>
+    <div class="feature-grid">
+      <figure><img loading="lazy" src="assets/features/01-title.webp" alt="SUNSET DISTRICT title screen"><figcaption><b>01 · Title / key art</b><span>Live city key art, start, settings, starting grid and records. The HUD is hidden.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/02-hero-keyshot.webp" alt="Start grid and city canyon"><figcaption><b>02 · Hero key art</b><span>The start grid under the gantry: player kart, five rivals, crowd, towers and wet road.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/03-kart-close.webp" alt="Kart close-up"><figcaption><b>03 · Kart detail</b><span>Front-three-quarter at 2.6 m: open-face wheels, brake discs, engine, harness, driver and number plates.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/04-race-hud.webp" alt="Race HUD and pack"><figcaption><b>04 · Race HUD</b><span>Lap, position, race clock, speed, gear, nitro, chassis, minimap, compass and radio, with the pack ahead.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/05-drift-nitro.webp" alt="Drifting kart with tyre smoke"><figcaption><b>05 · Drift + nitro</b><span>Slip-angle drift, tyre smoke, skid marks, mini-turbo, charged nitro and the coaching prompt.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/06-boost-pad.webp" alt="Boost pad and exhaust flames"><figcaption><b>06 · Boost pad</b><span>Pad chevrons, exhaust flame, spark spray, NITRO ENGAGED and the compass to the next pad.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/07-cone-hazard.webp" alt="Cone hazard and caution marker"><figcaption><b>07 · Cone hazard</b><span>Three cone zones on the racing line, a world CAUTION marker and chassis damage on contact.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/08-lap-radio.webp" alt="Lap banner and radio subtitle"><figcaption><b>08 · Lap + radio</b><span>Lap 2/4 banner, the beat dots, the P2 objective switch and a race-control subtitle.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/09-pause.webp" alt="Pause screen"><figcaption><b>09 · Pause</b><span>Resume, restart, settings and quit; position, lap, elapsed race time and chassis on the panel.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/10-settings.webp" alt="Settings screen"><figcaption><b>10 · Settings</b><span>Sensitivity, volume, FOV, invert-Y, quality preset, mute and an erase-record action — persisted.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/11-time-up.webp" alt="Time-up failure screen"><figcaption><b>11 · Time up</b><span>A named failure at the real 4:00 limit: race clock expired, P6/6 and run recorded.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/features/12-podium-win.webp" alt="Podium win screen"><figcaption><b>12 · Podium win</b><span>P1, race time, best lap, top speed, CITY CUP SECURED and a one-tap rematch.</span></figcaption></figure>
+      <figure class="portrait"><img loading="lazy" src="assets/features/13-mobile-touch.webp" alt="Mobile touch layout"><figcaption><b>13 · Mobile touch</b><span>390 × 844: steering, GAS, BRK, DRIFT, NITRO, pause, compact HUD and no horizontal overflow.</span></figcaption></figure>
+    </div>
+    <div class="contact-frame"><img loading="lazy" src="assets/feature-contact-sheet.webp" alt="Feature contact sheet"><p class="muted" style="font:400 11px/1.6 var(--mono);padding:12px 14px;margin:0;border-top:1px solid var(--line)">Feature contact sheet · 13 shots · 1600 × 900 (mobile 390 × 844) · captured at a fixed seed.</p></div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="section-head">
+      <div><div class="kicker">The record</div><h2>Six rounds</h2></div>
+      <p>Every round was captured from a fixed camera and a fixed seed. The next change came from the lowest gate/metric, not from the most interesting idea.</p>
+    </div>
+    <div class="timeline">
+      <div class="round">
+        <div class="round-no">00</div>
+        <div><h3>First light</h3><div class="body">The whole pipeline existed before the art pass: an inlined Three.js, a seeded city, a spline circuit, procedural karts, a sky and a post chain. The first frame exposed gross defects: <b>barriers rotated across the track</b>, the hero camera inside the grandstand roof, a neon palette and a title card covering the cars.</div></div>
+        <figure><img loading="lazy" src="assets/iterations/r00.webp" alt="First framed title screen"><figcaption><b>00 · first frame</b><span>The pipeline worked; the geometry did not.</span></figcaption></figure>
+      </div>
+      <div class="round">
+        <div class="round-no">01</div>
+        <div><h3>Correct the circuit, compose the grid</h3><div class="body">The player moved to the back-right grid slot and the camera inside the barrier line. The grandstand moved off the sightline. The barriers became continuous concrete-and-steel walls. A dimensioned city fabric replaced the empty ground. <b>Top-down check:</b> the loop, barriers and city blocks read as a circuit rather than a prop ring.</div></div>
+        <figure><img loading="lazy" src="assets/iterations/r02.webp" alt="Composition after the barrier fix"><figcaption><b>01 · composition</b><span>Continuous barriers, a readable grid and city depth.</span></figcaption></figure>
+      </div>
+      <div class="round">
+        <div class="round-no">02</div>
+        <div><h3>Materials and colour</h3><div class="body">The 5 × 5 facade atlas gained recessed windows, sills, blinds and normal maps. The asphalt gained gutter/rut wetness and a wet roughness map. A composite desaturation brought measured colourfulness from <b>107.6 → 40.6</b> and midtones from <b>51.8% → 59.6%</b>. Spectators, awnings and shop signs filled the street.</div><div class="metric"><span>colourfulness 40.6</span><span>midtones 59.6%</span><span>clip 0.69/0.72</span></div></div>
+        <figure><img loading="lazy" src="assets/iterations/r05.webp" alt="Materials and crowd pass"><figcaption><b>02 · material pass</b><span>The frame stopped reading as an ungraded asset dump.</span></figcaption></figure>
+      </div>
+      <div class="round">
+        <div class="round-no">03</div>
+        <div><h3>The signature surface</h3><div class="body">A half-resolution mirrored camera renders the city except the road. The wet asphalt samples it through a Fresnel × roughness mask, a ripple warp and a four-tap blur. This one system carried the “wet sunset street” idea into every race frame; it is the visual leap of the whole project.</div><div class="metric"><span>planar reflection</span><span>HIGH / ULTRA only</span></div></div>
+        <figure><img loading="lazy" src="assets/iterations/r06.webp" alt="Planar reflection on the wet road"><figcaption><b>03 · wet road</b><span>Trees, karts, buildings and sky in the asphalt.</span></figcaption></figure>
+      </div>
+      <div class="round">
+        <div class="round-no">04</div>
+        <div><h3>Hero object, city density</h3><div class="body">The tyre cylinder was hiding the rims: the sidewalls were solid caps. Opening them exposed the rims, spokes, brake discs and lettering. A wedge nose, rear wing, number plates, harness and engine detail made the kart nameable at 2.6 m. The background gained a dense block grid, setbacks, rooftop units and two landmark towers.</div></div>
+        <figure><img loading="lazy" src="assets/iterations/r11.webp" alt="Kart close-up with open wheel faces"><figcaption><b>04 · hero detail</b><span>A code-kit kart made legible, tyre text included.</span></figcaption></figure>
+      </div>
+      <div class="round">
+        <div class="round-no">05</div>
+        <div><h3>Product shell and a real loop</h3><div class="body">Title, settings, pause, save, touch, win, loss and restart; four laps with five AI rivals, drift/nitro, boost pads, cone hazards, a 4:00 clock and a health bar. The product gate caught a real defect: the pause/settings modal computed to <b>opacity 0</b> because of a fade-in animation. The screens must be visible in the DOM, not only in a screenshot.</div><div class="metric"><span>product PASS</span><span>31/31 playtest</span></div></div>
+        <figure><img loading="lazy" src="assets/iterations/r12.webp" alt="Finished title shell"><figcaption><b>05 · the shell</b><span>Title, settings, records and the grid.</span></figcaption></figure>
+      </div>
+      <div class="round">
+        <div class="round-no">06</div>
+        <div><h3>Tone, evidence, final captures</h3><div class="body">The final pair of stills crushed blacks to <b>7.24%</b> (hero) and <b>12.1%</b> (close). A shadow lift, a softer vignette, more sky bounce and a tighter lit close camera moved the hero to <b>1.63%</b> and the close to <b>2.08%</b>; flat tiles on the close fell from 15% to <b>7%</b>. Both cameras passed the fallback tone + emptiness gate.</div><div class="metric"><span>look PASS</span><span>worst close: flat 7%</span></div></div>
+        <figure><img loading="lazy" src="assets/iterations/final-hero.webp" alt="Final hero frame"><figcaption><b>06 · final hero</b><span>The same camera, after the tone and material work.</span></figcaption></figure>
+      </div>
+    </div>
+    <div class="quote">“The gate is not the picture. It is the argument about the picture that survives when nobody is looking at it.”</div>
+    <div class="privacy"><h3>Process note</h3><p>During the shell round, a multi-file batch edit overwrote the main game module and the page went blank. The module was reconstructed from the build transcript, all 25 later patches were replayed, and every subsequent round was committed to a local checkpoint before the next edit. The record above is the real one, including that failure mode.</p></div>
+  </div>
+</section>
+
+<section id="iterations">
+  <div class="wrap">
+    <div class="section-head">
+      <div><div class="kicker">All frames kept</div><h2>Iteration gallery</h2></div>
+      <p>Every fixed-camera round, including the ones that were reverted. The contact sheet at the bottom is the whole build on one page.</p>
+    </div>
+    <div class="iter-grid">
+      <figure><img loading="lazy" src="assets/iterations/r01.webp" alt="Clean first scene"><figcaption><b>01 · first clean frame</b><span>Camera and light read; geometry broken.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/r03.webp" alt="Practice city frame"><figcaption><b>03 · city practice</b><span>More depth, still too plastic.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/r04.webp" alt="Post-facade frame"><figcaption><b>04 · facades</b><span>Relief and a darker road; saturation still high.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/r07.webp" alt="Sun tuning frame"><figcaption><b>07 · sun tuning</b><span>Reflection present, warmth pushed too far.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/r08-dense.webp" alt="Dense city fabric"><figcaption><b>08 · city fabric</b><span>Background grid, billboards, more depth.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/r08-kart-close.webp" alt="Early kart close"><figcaption><b>08 · early kart close</b><span>The old nose blob; motivation for the kit pass.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/r09-kart-close.webp" alt="Kart close iteration"><figcaption><b>09 · close iteration</b><span>Rear three-quarter, before the open wheels.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/r10-kart-close.webp" alt="Kart close iteration"><figcaption><b>10 · close iteration</b><span>Livery, wing and engine gaining legibility.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/layout-top2.webp" alt="Top-down circuit and city fabric"><figcaption><b>layout · top-down</b><span>Circuit, barriers and block fabric checked from above.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/final-close.webp" alt="Final kart close"><figcaption><b>final · close camera</b><span>2.6 m front three-quarter, tone lifted.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/final-race-hud.webp" alt="Final race HUD"><figcaption><b>final · race HUD</b><span>The complete interface at speed.</span></figcaption></figure>
+      <figure><img loading="lazy" src="assets/iterations/final-mobile-title.webp" alt="Mobile title"><figcaption><b>final · mobile title</b><span>390 × 844 title and start path.</span></figcaption></figure>
+    </div>
+    <div class="contact-frame"><img loading="lazy" src="assets/contact-sheet.webp" alt="Contact sheet of the whole build"></div>
+    <p class="muted" style="font:400 11px/1.6 var(--mono);margin-top:12px">Contact sheet · 16 frames · fixed seed 20261114 · every frame generated at runtime.</p>
+  </div>
+</section>
+
+<section id="gates">
+  <div class="wrap">
+    <div class="section-head">
+      <div><div class="kicker">Evidence, not vibes</div><h2>Gates</h2></div>
+      <p>The final build was checked with the skill's executable contracts. The stock walker/cargo gates were re-expressed for a racing circuit.</p>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Gate</th><th>What was measured</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Product</td><td>Title, race, pause, settings, lost, won, persistence, touch, 4-step objective, roles/tools, HUD, audio, two cameras; <b>635 draw calls / 539,243 triangles / 4 lights</b></td><td class="pass">PASS</td></tr>
+        <tr><td>Mobile</td><td>390 × 844; no horizontal overflow; title usable; touch UI present</td><td class="pass">PASS</td></tr>
+        <tr><td>Census</td><td>435 meshes / 759 instances; 0 failures; no nearby prop without identity</td><td class="pass">PASS</td></tr>
+        <tr><td>Lights</td><td>4 lights, every one anchored to a fixture (or sun/sky)</td><td class="pass">PASS</td></tr>
+        <tr><td>Playtest</td><td>31 checks: title/race, pause/settings, save, accelerate, drift/turbo, full 4-lap finish, timer fail, wreck, restart, barrier push/stop, open road</td><td class="pass">31 / 31</td></tr>
+        <tr><td>Look (fallback)</td><td>No external reference by project constraint. Hero: clip 0.01/1.63%, midtones 67.0%, flat 0%. Close: clip 0.07/2.08%, midtones 64.8%, flat 7.0%</td><td class="pass">PASS</td></tr>
+        <tr><td>Collision (adapted)</td><td>204 barrier AABBs; edge push stops at 5.10 m; road remains open forward; wall clamp while driving</td><td class="pass">PASS</td></tr>
+        <tr><td>Offline</td><td>No external image/font/script requests; Three.js r169 inlined; all textures generated by canvas</td><td class="pass">PASS</td></tr>
+      </tbody>
+    </table></div>
+    <div class="notes" style="margin-top:40px">
+      <div><h3>What is still not photoreal</h3><ul>
+        <li>The kart is a code-authored low-poly kit. At 2.6 m the wing, seat and arms still read as designed primitives, not a manufactured vehicle.</li>
+        <li>The city is box massing with a facade atlas. From above it reads as a block diagram; from the street the facades carry the scene.</li>
+        <li>The spectator set is intentionally minimal; the crowd is two instanced draws, not individually modelled people.</li>
+        <li>No external reference imagery was permitted, so the look gate is tone + emptiness, not a similarity score.</li>
+        <li>No mobile GPU profile was captured; the mobile preset defaults to MEDIUM and the quality selector exposes LOW–ULTRA.</li>
+      </ul></div>
+      <div><h3>What the player can do</h3><ul>
+        <li>Race four laps from P6 to the podium; drift for nitro, release for mini-turbo, spend it on the straights.</li>
+        <li>Hit six boost pads, dodge three cone zones, survive barriers and rival contact; repair at each lap.</li>
+        <li>Win at P1–P3, lose to the 4:00 clock, a wrecked chassis, or a P4+ finish; restart in one action.</li>
+        <li>Persist best lap and best finish; change sensitivity, volume, FOV, invert-Y, quality and mute.</li>
+        <li>Play with keyboard + mouse or touch at 390 × 844; look around with a drag.</li>
+      </ul></div>
+    </div>
+    <div class="privacy"><h3>Privacy &amp; data</h3><p>No analytics, cookies, tracking, external requests or personal data. The game stores only the best lap, best position and settings in <code>localStorage</code>. The screenshots were captured headlessly at a fixed seed; the names in the game are fictional. The site is static: no server, no account, no comments.</p></div>
+  </div>
+</section>
+
+<section id="credits">
+  <div class="wrap">
+    <div class="section-head">
+      <div><div class="kicker">Method &amp; materials</div><h2>Credits</h2></div>
+    </div>
+    <div class="notes">
+      <div><h3>Method</h3><ul>
+        <li><b>photoreal-game</b> — the procedure, the art-direction brief, the iteration loop and the acceptance gates.</li>
+        <li>Rendering: Three.js r169 (MIT), inlined into the single HTML; no network loader.</li>
+        <li>Assets: every city block, facade, road texture, kart, tree, spectator, sign, particle and sound is generated by code at load time.</li>
+        <li>No reference imagery was used; no external assets are requested.</li>
+      </ul></div>
+      <div><h3>License</h3><ul>
+        <li>Original game code and generated content: MIT. See <a href="LICENSE">LICENSE</a>.</li>
+        <li>Three.js r169: MIT; full notice in <a href="THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>.</li>
+        <li>The site is a static folder; deploy it to any GitHub Pages branch or subfolder.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <div class="footer-row">
+    <a class="brand" href="index.html"><i></i>SUNSET DISTRICT · CITY KART GP</a>
+    <div class="footer-links"><a href="index.html">Play</a><a href="#features">Features</a><a href="PROCESS.md">Process.md</a><a href="THIRD_PARTY_NOTICES.md">Notices</a></div>
+  </div>
+  <div class="legal">SUNSET DISTRICT is a fictional city and a fictional grand prix. This site contains no personal data, no analytics, no third-party requests. Built with the photoreal-game skill; Three.js r169 is inlined under the MIT license. Original content © 2026 SUNSET DISTRICT contributors, MIT.</div>
+</div></footer>
+<script>window.__READY=true;</script>
+</body>
+</html>
