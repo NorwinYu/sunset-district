@@ -34,10 +34,27 @@ assets/features/            high-quality feature screenshots (WebP)
 assets/iterations/          fixed-camera iteration screenshots
 assets/contact-sheet.webp   the whole build on one page
 assets/feature-contact-sheet.webp
+src/                        game source: 4 JS modules, CSS, HTML template
+vendor/three.module.js      Three.js r169 source used by the build
+build.mjs                   inlines Three.js + CSS + JS into dist/sunset-district.html
 LICENSE                     MIT for the original code and generated content
 THIRD_PARTY_NOTICES.md      Three.js r169 MIT notice
 .nojekyll                   serve the folder as-is on GitHub Pages
 ```
+
+## Source & build
+
+The playable `index.html` is a built artifact; its source is in `src/`.
+
+```bash
+node build.mjs
+# writes dist/sunset-district.html
+```
+
+The build is dependency-free Node + local `vendor/three.module.js`. The deployed
+root `index.html` is the same build with two site-only additions: a meta
+description and a `PROCESS / SKILL` link in the title footer. All game code is
+original; Three.js is inlined under its MIT license. `node_modules` is not needed.
 
 There is no package manager, build step or server requirement for the site.
 

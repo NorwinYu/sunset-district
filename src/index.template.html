@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>SUNSET DISTRICT — City Kart Grand Prix</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b0d10'/%3E%3Cpath d='M12 42h40L40 20H24z' fill='%23ffb454'/%3E%3C/svg%3E">
+<style>/*__STYLE__*/</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="c"></canvas>
+  <div id="grade" aria-hidden="true"></div>
+  <div id="flare" aria-hidden="true"></div>
+
+  <!-- ======================= IN-RACE HUD ======================= -->
+  <div id="hud" class="hidden">
+    <div id="hud-top">
+      <div class="hud-card" id="objective-card">
+        <div class="hud-eyebrow"><span class="dot"></span> SUNSET DISTRICT GP</div>
+        <div id="objective">WIN THE CITY CUP</div>
+        <div class="hud-sub"><span id="lap">LAP 1 / 3</span><span id="beat-dots">● ○ ○</span></div>
+      </div>
+
+      <div id="pos-card">
+        <div id="pos">P6</div>
+        <div id="pos-of">/ 6</div>
+      </div>
+
+      <div class="hud-card" id="time-card">
+        <div class="hud-eyebrow">RACE CLOCK</div>
+        <div id="race-time">03:20.0</div>
+        <div class="hud-sub"><span id="last-lap">LAST —</span><span id="best-lap">BEST —</span></div>
+      </div>
+
+      <div id="minimap-wrap">
+        <canvas id="minimap" width="180" height="180"></canvas>
+        <div id="compass-row"><span id="compass-arrow">▲</span><span id="compass-text">START / FINISH · 0 m</span></div>
+      </div>
+    </div>
+
+    <div id="hud-bottom">
+      <div id="speed-cluster">
+        <div id="speed">0</div>
+        <div class="speed-unit">KM/H</div>
+        <div id="gear">N</div>
+        <svg id="rpm" viewBox="0 0 220 60" aria-hidden="true">
+          <path d="M10 50 A100 100 0 0 1 210 50" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="6" stroke-linecap="round"/>
+          <path id="rpm-fill" d="M10 50 A100 100 0 0 1 210 50" fill="none" stroke="#ffc46b" stroke-width="6" stroke-linecap="round" stroke-dasharray="315" stroke-dashoffset="315"/>
+        </svg>
+      </div>
+      <div id="meters">
+        <div class="meter-row">
+          <span class="meter-label">NITRO</span>
+          <div class="meter"><i id="nitro-fill"></i></div>
+          <span id="nitro-num">100</span>
+        </div>
+        <div class="meter-row">
+          <span class="meter-label">CHASSIS</span>
+          <div class="meter dmg"><i id="damage-fill"></i></div>
+          <span id="damage-num">100</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="race-msg"></div>
+    <div id="subtitle" class="hidden"><span id="subtitle-kicker">RADIO</span><span id="subtitle-text"></span></div>
+    <div id="prompt" class="hidden">SHIFT · NITRO</div>
+    <div id="lap-banner" class="hidden"></div>
+  </div>
+
+  <!-- ======================= TOUCH CONTROLS ======================= -->
+  <div id="touch" class="hidden" aria-label="touch controls">
+    <div id="t-steer">
+      <button id="t-left" aria-label="steer left">◀</button>
+      <button id="t-right" aria-label="steer right">▶</button>
+    </div>
+    <div id="t-pedals">
+      <button id="t-drift" class="small" aria-label="drift">DRIFT</button>
+      <button id="t-boost" class="small" aria-label="nitro">NITRO</button>
+      <button id="t-brake" class="small" aria-label="brake">BRK</button>
+      <button id="t-gas" aria-label="throttle">GAS</button>
+    </div>
+    <button id="t-pause" aria-label="pause">Ⅱ</button>
+  </div>
+
+  <!-- ======================= TITLE ======================= -->
+  <div id="start" class="screen">
+    <div class="title-left">
+      <div class="title-eyebrow"><span class="rule"></span> ARANYA CITY · 17:42 · <span id="title-laps">4 LAPS</span></div>
+      <h1>SUNSET<br><em>DISTRICT</em></h1>
+      <div class="title-sub">CITY KART GRAND PRIX</div>
+      <p class="premise">Six karts. One downtown circuit. The last light of a wet afternoon is on the asphalt — drift it, boost it, and take the city cup before the clock runs dry.</p>
+      <div class="title-actions">
+        <button id="btn-start" class="btn primary">START THE GRAND PRIX <span>⏎</span></button>
+        <button id="btn-settings" class="btn ghost">SETTINGS / CONTROLS</button>
+      </div>
+      <div class="title-meta">
+        <div><span class="k">BEST LAP</span><span id="title-best">—</span></div>
+        <div><span class="k">PODIUM</span><span id="title-podium">—</span></div>
+        <div><span class="k">CIRCUIT</span><span id="title-circuit">0.49 KM · 4 LAPS</span></div>
+      </div>
+    </div>
+    <div class="title-right">
+      <div class="grid-card">
+        <div class="gc-head">STARTING GRID <span>GRID 6</span></div>
+        <ol id="grid-list"></ol>
+      </div>
+      <div class="controls-card">
+        <div class="cc-row"><span>W / ↑</span><span>THROTTLE</span></div>
+        <div class="cc-row"><span>S / ↓</span><span>BRAKE · REVERSE</span></div>
+        <div class="cc-row"><span>A D / ← →</span><span>STEER</span></div>
+        <div class="cc-row"><span>SPACE</span><span>DRIFT</span></div>
+        <div class="cc-row"><span>SHIFT</span><span>NITRO</span></div>
+        <div class="cc-row"><span>DRAG / MOUSE</span><span>LOOK AROUND</span></div>
+      </div>
+    </div>
+    <div class="title-footer">
+      <span>OFFLINE BUILD · WEBGL</span>
+      <span id="build-id">SD-GP 1.0</span>
+      <span>SOUND ON · <b id="title-mute">UNMUTED</b></span>
+    </div>
+  </div>
+
+  <!-- ======================= PAUSE ======================= -->
+  <div id="pause" class="screen modal hidden">
+    <div class="panel pause-panel">
+      <div class="panel-eyebrow">RACE CONTROL</div>
+      <h2>PAUSED</h2>
+      <div class="pause-stats">
+        <div><span class="k">POSITION</span><b id="p-pos">P6</b></div>
+        <div><span class="k">LAP</span><b id="p-lap">1 / 3</b></div>
+        <div><span class="k">RACE TIME</span><b id="p-time">0:00.0</b></div>
+        <div><span class="k">CHASSIS</span><b id="p-dmg">100%</b></div>
+      </div>
+      <div class="panel-actions">
+        <button id="btn-resume" class="btn primary">RESUME</button>
+        <button id="btn-restart" class="btn ghost">RESTART RACE</button>
+        <button id="btn-pause-settings" class="btn ghost">SETTINGS</button>
+        <button id="btn-quit" class="btn ghost">QUIT TO TITLE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= SETTINGS ======================= -->
+  <div id="settings" class="screen modal hidden">
+    <div class="panel settings-panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-eyebrow">RACE CONTROL</div>
+          <h2>SETTINGS</h2>
+        </div>
+        <button id="btn-close-settings" class="icon-btn" aria-label="close settings">✕</button>
+      </div>
+      <div class="settings-grid">
+        <label class="set-row"><span>LOOK SENSITIVITY</span><input id="set-sensitivity" type="range" min="20" max="200" step="5" value="100"><b id="val-sensitivity">1.00×</b></label>
+        <label class="set-row"><span>MASTER VOLUME</span><input id="set-volume" type="range" min="0" max="100" step="1" value="70"><b id="val-volume">70%</b></label>
+        <label class="set-row"><span>FIELD OF VIEW</span><input id="set-fov" type="range" min="52" max="86" step="1" value="64"><b id="val-fov">64°</b></label>
+        <label class="set-row"><span>INVERT LOOK-Y</span><input id="set-invert" type="checkbox"><b id="val-invert">OFF</b></label>
+        <label class="set-row"><span>QUALITY PRESET</span>
+          <select id="set-quality">
+            <option value="low">LOW</option><option value="medium">MEDIUM</option>
+            <option value="high" selected>HIGH</option><option value="ultra">ULTRA</option>
+          </select><b id="val-quality">HIGH</b></label>
+        <label class="set-row"><span>MASTER MUTE</span><input id="set-mute" type="checkbox"><b id="val-mute">OFF</b></label>
+      </div>
+      <div class="settings-note">Drifting charges nitro. Nitro is faster than brakes are strong. The clock is not your friend.</div>
+      <div class="panel-actions row">
+        <button id="btn-settings-done" class="btn primary">DONE</button>
+        <button id="btn-reset-save" class="btn ghost danger">ERASE RECORD</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= END ======================= -->
+  <div id="end" class="screen modal hidden">
+    <div class="panel end-panel">
+      <div class="panel-eyebrow" id="end-kicker">CHEQUERED FLAG</div>
+      <h2 id="end-title">P1</h2>
+      <div id="end-cause">YOU WON THE SUNSET DISTRICT GP</div>
+      <div class="end-stats">
+        <div><span class="k">POSITION</span><b id="e-pos">P1 / 6</b></div>
+        <div><span class="k">RACE TIME</span><b id="e-time">0:00.0</b></div>
+        <div><span class="k">BEST LAP</span><b id="e-best">—</b></div>
+        <div><span class="k">TOP SPEED</span><b id="e-top">—</b></div>
+      </div>
+      <div class="end-flag" id="end-flag">NEW PERSONAL BEST</div>
+      <div class="panel-actions row">
+        <button id="btn-again" class="btn primary">RACE AGAIN</button>
+        <button id="btn-end-menu" class="btn ghost">TITLE SCREEN</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading" class="screen"><div class="load-mark">SUNSET DISTRICT</div><div class="load-bar"><i id="load-fill"></i></div><div class="load-text" id="load-text">BUILDING THE CITY…</div></div>
+  <noscript><div style="color:#fff;padding:2rem">This game needs JavaScript and WebGL.</div></noscript>
+</div>
+<script>/*__THREE__*/</script>
+<script>/*__GAME__*/</script>
+</body>
+</html>
